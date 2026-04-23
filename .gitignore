@@ -9,9 +9,12 @@ hashcat.potfile
 uploads/hashes/
 uploads/wordlists/
 
-# Hashcat binary and GPU kernels (large, platform-specific)
-hashcat/
+# Compiled GPU kernels — hardware-specific, regenerated automatically on first run
+hashcat/kernels/
 kernels/
+
+# Rust build artifacts inside hashcat
+hashcat/Rust/*/target/
 
 # Job sessions and restore files
 sessions/
