@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HashcatUI</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23f97316'/%3E%3Ctext y='.9em' font-size='72' x='50%25' text-anchor='middle' fill='white'%3E⚡%3C/text%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { gray: { 950: '#0a0a0f' } } } }
+    }
+  </script>
+</head>
+<body class="dark bg-gray-950 text-gray-100 flex h-screen overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="w-48 bg-gray-900 border-r border-gray-800 flex flex-col flex-shrink-0 select-none">
+
+    <div class="h-13 flex items-center px-4 py-3 border-b border-gray-800 gap-2">
+      <div class="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-bolt text-white" style="font-size:0.6rem"></i>
+      </div>
+      <span class="font-bold text-white text-sm tracking-tight">HashcatUI</span>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
+      <a class="nav-link" href="#/jobs/new"     data-page="jobs/new">
+        <i class="fa-solid fa-plus nav-icon"></i>New Job
+      </a>
+      <a class="nav-link" href="#/jobs/queue"   data-page="jobs/queue">
+        <i class="fa-solid fa-list-check nav-icon"></i>Queue
+        <span id="badge-queue" class="ml-auto badge hidden">0</span>
+      </a>
+      <a class="nav-link" href="#/jobs/history" data-page="jobs/history">
+        <i class="fa-solid fa-clock-rotate-left nav-icon"></i>History
+      </a>
+
+      <div class="my-1.5 mx-1 border-t border-gray-800"></div>
+
+      <a class="nav-link" href="#/results"  data-page="results">
+        <i class="fa-solid fa-key nav-icon"></i>Results
+        <span id="badge-cracked" class="ml-auto badge hidden">0</span>
+      </a>
+      <a class="nav-link" href="#/files"    data-page="files">
+        <i class="fa-solid fa-folder-open nav-icon"></i>Files
+      </a>
+      <a class="nav-link" href="#/monitor"  data-page="monitor">
+        <i class="fa-solid fa-terminal nav-icon"></i>Monitor
+      </a>
+      <a class="nav-link" href="#/settings" data-page="settings">
+        <i class="fa-solid fa-gear nav-icon"></i>Settings
+      </a>
+    </nav>
+
+    <div class="px-3 py-2 border-t border-gray-800 flex items-center gap-2 text-xs text-gray-500">
+      <span id="ws-dot" class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span>
+      <span id="ws-label">Disconnected</span>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <header class="h-12 bg-gray-900 border-b border-gray-800 flex items-center px-5 gap-3 flex-shrink-0">
+      <h1 id="page-title" class="font-semibold text-gray-200 text-sm"></h1>
+
+      <div id="active-pill" class="hidden ml-2 flex items-center gap-1.5 bg-orange-500/15 border border-orange-500/30 text-orange-400 text-xs px-2.5 py-1 rounded-full">
+        <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
+        <span id="active-pill-text">Running</span>
+        <span id="active-pill-speed" class="text-orange-300/70 ml-1"></span>
+      </div>
+
+      <div class="ml-auto flex items-center gap-4 text-xs text-gray-500">
+        <span class="flex items-center gap-1.5">
+          <i class="fa-solid fa-key text-green-500"></i>
+          <span id="stat-cracked-val">0</span> cracked
+        </span>
+        <span class="flex items-center gap-1.5">
+          <i class="fa-solid fa-list text-blue-400"></i>
+          <span id="stat-jobs-val">0</span> jobs
+        </span>
+      </div>
+    </header>
+
+    <main id="content" class="flex-1 overflow-y-auto p-5">
+      <div class="flex items-center justify-center h-full text-gray-600">
+        <i class="fa-solid fa-bolt text-5xl text-orange-500/20"></i>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# Database
+hashcatui.db
+
+# Potfile (may contain cracked passwords)
+*.potfile
+hashcat.potfile
+
+# Uploaded files (user data, not code)
+uploads/hashes/
+uploads/wordlists/
+
+# Hashcat binary and GPU kernels (large, platform-specific)
+hashcat/
+kernels/
+
+# Job sessions and restore files
+sessions/
+
+# Persistent logs
+logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code project memory (local dev only)
+.claude/

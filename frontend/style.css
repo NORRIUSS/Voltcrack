@@ -1,0 +1,273 @@
+/* ── Sidebar nav ─────────────────────────────────────────────────────────── */
+.nav-section-label {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4b5563; /* gray-600 */
+  margin-bottom: 0.1rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #9ca3af; /* gray-400 */
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.06);
+  color: #f3f4f6;
+}
+
+.nav-link.active {
+  background: rgba(249, 115, 22, 0.15); /* orange-500/15 */
+  color: #fb923c; /* orange-400 */
+}
+
+.nav-icon {
+  width: 1rem;
+  text-align: center;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.badge {
+  background: #f97316;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.05rem 0.45rem;
+  line-height: 1.4;
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.card {
+  background: #111118;
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+}
+
+.card-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #d1d5db; /* gray-300 */
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.01em;
+}
+
+/* ── Form fields ─────────────────────────────────────────────────────────── */
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280; /* gray-500 */
+  margin-bottom: 0.35rem;
+}
+
+.field-input {
+  display: block;
+  width: 100%;
+  background: #0f1117;
+  border: 1px solid #374151; /* gray-700 */
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #e5e7eb;
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+
+.field-input:focus {
+  border-color: #f97316;
+}
+
+.field-input option {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f97316;
+  color: white;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn-primary:hover { background: #ea6f14; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f2937;
+  color: #9ca3af;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-secondary:hover { background: #374151; color: #e5e7eb; }
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 0.4rem;
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.btn-icon:hover { background: #374151; color: #e5e7eb; }
+
+.btn-icon-danger:hover { background: rgba(239,68,68,0.15); color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+/* ── Custom hash type dropdown ───────────────────────────────────────────── */
+.ht-item:focus {
+  outline: none;
+  background: rgba(249,115,22,0.2);
+  color: #fb923c;
+}
+
+/* ── Tab buttons ─────────────────────────────────────────────────────────── */
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  background: transparent;
+  border: 1px solid #374151;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.tab-btn:hover {
+  color: #d1d5db;
+  background: #1f2937;
+}
+
+.tab-btn.active {
+  background: rgba(249,115,22,0.15);
+  border-color: rgba(249,115,22,0.4);
+  color: #fb923c;
+}
+
+/* ── Attack mode buttons ─────────────────────────────────────────────────── */
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.625rem;
+  background: #0f1117;
+  border: 1px solid #374151;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.75rem;
+}
+
+.mode-btn:hover {
+  background: #1f2937;
+  color: #d1d5db;
+  border-color: #4b5563;
+}
+
+.mode-btn.active {
+  background: rgba(249,115,22,0.15);
+  border-color: rgba(249,115,22,0.5);
+  color: #fb923c;
+}
+
+/* ── Terminal / Log ──────────────────────────────────────────────────────── */
+.log-terminal {
+  background: #070710;
+  border: 1px solid #1f2937;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  min-height: 400px;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: #86efac; /* green-300 */
+}
+
+.log-line {
+  white-space: pre-wrap;
+  word-break: break-all;
+  padding: 0.05rem 0;
+}
+
+.log-line:empty::after {
+  content: '\00a0';
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+/* ── Misc ────────────────────────────────────────────────────────────────── */
+select[size] {
+  padding: 0.25rem;
+}
+
+select[size] option {
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+select[size] option:checked {
+  background: rgba(249,115,22,0.3);
+  color: #fb923c;
+}
+
+code {
+  background: #1f2937;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.8em;
+}
+
+.expand-chevron {
+  transition: transform 0.15s;
+}
+.expand-chevron.rotate-90 {
+  transform: rotate(90deg);
+}
