@@ -1,5 +1,5 @@
 """
-HashcatUI launcher — run this to start the web server.
+Voltcrack launcher — run this to start the web server.
 Usage:  python start.py
 Then open http://localhost:8000 in your browser.
 """
@@ -21,7 +21,7 @@ def main():
     check_deps()
     import uvicorn
     print("=" * 50)
-    print("  HashcatUI")
+    print("  Voltcrack")
     print("  http://localhost:8000")
     print("=" * 50)
     uvicorn.run(

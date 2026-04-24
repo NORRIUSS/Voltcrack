@@ -25,7 +25,7 @@ from .models import AppSettings, CrackedHash, Job, JobStatus, JobTemplate
 ROOT = Path(__file__).parent.parent
 FRONTEND_DIR = ROOT / "frontend"
 
-app = FastAPI(title="HashcatUI", docs_url="/api/docs")
+app = FastAPI(title="Voltcrack", docs_url="/api/docs")
 
 runner = HashcatRunner()
 queue = JobQueue(runner)

@@ -2,7 +2,7 @@
 <div align="center">
 
 ```
-⚡ HashcatUI
+⚡ Voltcrack
 ```
 
 **A web UI for hashcat that doesn't make you want to cry**
@@ -17,7 +17,7 @@
 
 Look, running hashcat from the terminal is fine. Totally fine. Nobody said anything about it not being fine. But what if — hear me out — what if you could do it from a dark-mode web UI with live progress bars and a GPU temperature readout? Yeah. That's what we're doing here.
 
-HashcatUI wraps hashcat in a slick browser interface so you can queue jobs, monitor them in real time, and not have to remember a single flag ever again.
+Voltcrack wraps hashcat in a slick browser interface so you can queue jobs, monitor them in real time, and not have to remember a single flag ever again.
 
 > ⚠️ **heads up** — this project is still in the **testing phase**. things work, but things also occasionally explode. you've been warned. use it, break it, tell me what broke.
 

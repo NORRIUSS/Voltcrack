@@ -3,7 +3,7 @@ from sqlmodel import create_engine, Session, SQLModel
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-DB_PATH = ROOT / "hashcatui.db"
+DB_PATH = ROOT / "voltcrack.db"
 engine = create_engine(f"sqlite:///{DB_PATH}", echo=False)
 
 # Each entry: (table, column, sqlite_type, default)
