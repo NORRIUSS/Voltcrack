@@ -16,7 +16,7 @@
 
 ---
 
-Look, running hashcat from the terminal is fine. Totally fine. Nobody said anything about it not being fine. But what if — hear me out — what if you could do it from a dark-mode web UI with live progress bars and a GPU temperature readout? Yeah. That's what we're doing here.
+Look, running hashcat from the terminal is fine. Totally fine. Nobody said anything about it not being fine. But what if — hear me out — what if you could do it from a dark-mode web UI with live progress bars, GPU temperature readout, and a benchmark page? Yeah. That's what we're doing here.
 
 Voltcrack wraps hashcat in a slick browser interface so you can queue jobs, monitor them in real time, and not have to remember a single flag ever again.
 
@@ -30,11 +30,12 @@ Voltcrack wraps hashcat in a slick browser interface so you can queue jobs, moni
 📋  job queue        →  create, queue, pause, resume, cancel jobs
 🔍  hash detection   →  auto-identifies hash types (+ hashes.com cross-check)
 📡  live monitoring  →  real-time speed, progress, GPU temp via WebSocket
-📁  file manager     →  upload wordlists and hash files through the browser
-📜  history          →  full job history with cracked results and error details
-💾  log persistence  →  every job's output saved to disk, readable anytime
 🖥️  device selector  →  pick which GPU/CPU devices hashcat should use
-📦  templates        →  save your favourite job configs and reuse them
+📁  file manager     →  upload wordlists and hash files through the browser
+📜  history          →  full job history, clone to re-run with a different hash type
+💾  log persistence  →  every job's output saved to disk, readable anytime
+⚡  benchmark        →  live streaming benchmark across common hash modes
+🔁  clone jobs       →  re-run any historical job with tweaked settings
 ```
 
 ---
@@ -76,6 +77,7 @@ then open **http://localhost:8000** in your browser.
 - **backend** — FastAPI, SQLite (via SQLModel), asyncio subprocess for hashcat
 - **frontend** — plain HTML/CSS/JS (no framework, no build step, no nonsense)
 - **realtime** — WebSocket for live job updates, cracks, and hardware stats
+- **benchmark** — Server-Sent Events (SSE) for live streaming benchmark results
 - **hash id** — `name-that-hash` locally + optional hashes.com cross-check
 
 ---
@@ -85,9 +87,12 @@ then open **http://localhost:8000** in your browser.
 it works! mostly! here's the honest breakdown:
 
 - ✅ job creation, queue, history, results — solid
-- ✅ real-time monitoring — works great
+- ✅ real-time monitoring with per-device GPU stats — works great
 - ✅ hash identification — pretty good, occasionally wrong (hash identification is hard, don't @ me)
 - ✅ pause/resume — works, may lose a few seconds of progress on pause
+- ✅ benchmark page — live streaming, cached between visits
+- ✅ clone jobs — re-run any job from history with a different hash type
+- ✅ log persistence — full stdout saved per job, viewable in history
 - 🧪 edge cases — still being discovered daily
 - 🧪 multi-GPU setups — works in theory, tested on potato hardware
 

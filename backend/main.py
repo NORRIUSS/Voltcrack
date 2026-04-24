@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -9,7 +10,7 @@ from fastapi import (
     Depends, FastAPI, File, HTTPException, UploadFile, WebSocket,
     WebSocketDisconnect,
 )
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlmodel import Session, select
@@ -114,6 +115,86 @@ async def get_devices(refresh: bool = False):
     if _devices_cache is None or refresh:
         _devices_cache = await runner.get_devices()
     return _devices_cache
+
+
+# ---------------------------------------------------------------------------
+# Benchmark
+# ---------------------------------------------------------------------------
+
+# Common modes for quick benchmark
+_QUICK_MODES = [0, 100, 1000, 1400, 1700, 1800, 2500, 3200, 5500, 5600,
+                13100, 22000, 22001, 23800, 27200]
+
+@app.get("/api/benchmark")
+async def run_benchmark(modes: str = "quick"):
+    """Stream benchmark results as SSE. modes='quick' | 'all' | '0,100,1000,...'"""
+    if modes == "quick":
+        mode_list = _QUICK_MODES
+    elif modes == "all":
+        mode_list = []  # empty = hashcat benchmarks everything
+    else:
+        try:
+            mode_list = [int(m.strip()) for m in modes.split(",") if m.strip()]
+        except ValueError:
+            mode_list = _QUICK_MODES
+
+    # Regexes for human-readable benchmark output:
+    #   * Hash-Mode 0 (MD5)
+    #   Speed.#1.........:  3467.1 MH/s (52.82ms) ...
+    _mode_re  = re.compile(r'\*\s+Hash-Mode\s+(\d+)\s+\((.+?)\)')
+    _speed_re = re.compile(r'Speed\.#\d+\.+:\s+([\d.]+)\s+([\w/]+)')
+
+    async def stream():
+        try:
+            proc = await runner.run_benchmark(mode_list)
+        except Exception as e:
+            yield f"data: {{\"error\": \"{e}\"}}\n\n"
+            return
+
+        current_id: Optional[int] = None
+        current_name: str = ""
+
+        async for raw in proc.stdout:
+            line = raw.decode("utf-8", errors="replace").strip()
+
+            m = _mode_re.search(line)
+            if m:
+                current_id   = int(m.group(1))
+                current_name = m.group(2).strip()
+                continue
+
+            m = _speed_re.search(line)
+            if m and current_id is not None:
+                speed_num  = float(m.group(1))
+                speed_unit = m.group(2)
+                raw_hz     = _to_hz(speed_num, speed_unit)
+                speed_str  = f"{speed_num} {speed_unit}"
+                payload = json.dumps({"id": current_id, "name": current_name,
+                                      "speed": speed_str, "raw": raw_hz})
+                yield f"data: {payload}\n\n"
+                current_id = None  # reset until next Hash-Mode line
+
+        await proc.wait()
+        yield "data: {\"done\": true}\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+def _to_hz(val: float, unit: str) -> int:
+    m = {'h/s': 1, 'kh/s': 1e3, 'mh/s': 1e6, 'gh/s': 1e9, 'th/s': 1e12}
+    return int(val * m.get(unit.lower(), 1))
+
+
+def _fmt_speed(val: int, unit: str) -> str:
+    unit = unit.strip().upper()
+    if unit == "H/S":
+        if val >= 1_000_000_000_000: return f"{val/1_000_000_000_000:.1f} TH/s"
+        if val >= 1_000_000_000:     return f"{val/1_000_000_000:.1f} GH/s"
+        if val >= 1_000_000:         return f"{val/1_000_000:.1f} MH/s"
+        if val >= 1_000:             return f"{val/1_000:.1f} kH/s"
+        return f"{val} H/s"
+    return f"{val} {unit}"
 
 
 # ---------------------------------------------------------------------------

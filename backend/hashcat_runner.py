@@ -185,6 +185,18 @@ class HashcatRunner:
             except Exception:
                 pass
 
+    async def run_benchmark(self, modes: list) -> asyncio.subprocess.Process:
+        """Start a benchmark subprocess. Returns the process; caller streams stdout."""
+        cmd = [str(HASHCAT_BIN), "-b"]
+        for m in modes:
+            cmd += ["-m", str(m)]
+        return await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
+            cwd=str(ROOT / "hashcat"),
+        )
+
     async def get_devices(self) -> list:
         try:
             proc = await asyncio.create_subprocess_exec(

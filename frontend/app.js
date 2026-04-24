@@ -140,6 +140,7 @@ const PAGE_TITLES = {
   'results':     'Results',
   'files':       'Files',
   'monitor':     'Monitor',
+  'benchmark':   'Benchmark',
   'settings':    'Settings',
 };
 
@@ -177,6 +178,7 @@ async function renderPage(page) {
     case 'results':      await renderResults(content); break;
     case 'files':        await renderFiles(content); break;
     case 'monitor':      await renderMonitor(content); break;
+    case 'benchmark':    await renderBenchmark(content); break;
     case 'settings':     await renderSettings(content); break;
     default: content.innerHTML = `<p class="text-gray-500">Unknown page: ${page}</p>`;
   }
@@ -1893,6 +1895,182 @@ async function renderMonitor(el) {
     </div>`;
 
   await renderLiveLog(document.getElementById('monitor-log-wrap'));
+}
+
+// ── Page: Benchmark ─────────────────────────────────────────────────────────
+async function renderBenchmark(el) {
+  let cachedResults = JSON.parse(localStorage.getItem('voltcrack_benchmark') || 'null');
+
+  function speedColor(raw) {
+    if (raw >= 1_000_000_000) return 'text-green-400';
+    if (raw >= 100_000_000)   return 'text-yellow-400';
+    if (raw >= 1_000_000)     return 'text-orange-400';
+    return 'text-red-400';
+  }
+
+  function resultsTable(results) {
+    if (!results?.length) return '';
+    const sorted = [...results].sort((a, b) => b.raw - a.raw);
+    return `
+      <div class="overflow-x-auto rounded-xl border border-gray-800">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-800 text-left text-xs text-gray-500 uppercase tracking-wider">
+              <th class="px-4 py-3">Mode</th>
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3 text-right">Speed</th>
+              <th class="px-4 py-3 w-40">Performance</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/50">
+            ${sorted.map(r => {
+              const maxRaw = sorted[0].raw;
+              const pct = Math.round((r.raw / maxRaw) * 100);
+              return `
+              <tr class="hover:bg-gray-800/40 transition-colors">
+                <td class="px-4 py-2.5 font-mono text-gray-500 text-xs">${r.id}</td>
+                <td class="px-4 py-2.5 text-gray-300">${escHtml(r.name)}</td>
+                <td class="px-4 py-2.5 text-right font-mono font-semibold ${speedColor(r.raw)}">${escHtml(r.speed)}</td>
+                <td class="px-4 py-2.5">
+                  <div class="w-full bg-gray-800 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full bg-orange-500/70 transition-all" style="width:${pct}%"></div>
+                  </div>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="max-w-3xl mx-auto space-y-4">
+      ${card(`
+        <h2 class="card-title">Run Benchmark</h2>
+        <p class="text-xs text-gray-500 mb-3">
+          Measures how fast your hardware can crack each hash type.
+          Quick mode tests the most common ~15 modes. Full mode tests everything (takes a while).
+        </p>
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="flex gap-1 p-1 bg-gray-800/60 rounded-lg">
+            <button id="bm-mode-quick" class="bm-mode-btn px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500/20 text-orange-300 border border-orange-500/30 transition-all" data-mode="quick">
+              Quick <span class="text-gray-500 font-normal">~15 modes</span>
+            </button>
+            <button id="bm-mode-all" class="bm-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-gray-400 hover:text-gray-200 transition-all" data-mode="all">
+              Full <span class="text-gray-500 font-normal">all modes</span>
+            </button>
+          </div>
+          <button id="btn-run-benchmark" class="btn-primary px-5">
+            <i class="fa-solid fa-stopwatch mr-2"></i>Run Benchmark
+          </button>
+          ${cachedResults ? `<button id="btn-clear-benchmark" class="btn-secondary text-xs px-3 py-1.5 text-red-400 border-red-500/30 hover:bg-red-500/10">
+            <i class="fa-solid fa-trash-can mr-1"></i>Clear results
+          </button>` : ''}
+        </div>
+      `)}
+
+      <div id="bm-progress" class="hidden">
+        ${card(`
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-spinner fa-spin text-orange-400"></i>
+            <div>
+              <p class="text-sm text-gray-200 font-medium">Benchmarking…</p>
+              <p id="bm-current" class="text-xs text-gray-500 mt-0.5">Starting up</p>
+            </div>
+            <button id="btn-stop-benchmark" class="ml-auto btn-secondary text-xs px-3 py-1.5 text-red-400 border-red-500/30 hover:bg-red-500/10">
+              <i class="fa-solid fa-xmark mr-1"></i>Stop
+            </button>
+          </div>
+          <div id="bm-live-table" class="mt-3"></div>
+        `)}
+      </div>
+
+      <div id="bm-results">
+        ${cachedResults ? `
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-xs text-gray-500">${cachedResults.length} modes benchmarked · results cached locally</p>
+          </div>
+          ${resultsTable(cachedResults)}` : ''}
+      </div>
+    </div>`;
+
+  let selectedMode = 'quick';
+  let activeStream = null;
+  let liveResults = [];
+
+  // Mode toggle
+  el.querySelectorAll('.bm-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedMode = btn.dataset.mode;
+      el.querySelectorAll('.bm-mode-btn').forEach(b => {
+        b.className = 'bm-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-gray-400 hover:text-gray-200 transition-all';
+      });
+      btn.className = 'bm-mode-btn px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500/20 text-orange-300 border border-orange-500/30 transition-all';
+    });
+  });
+
+  // Clear cached results
+  document.getElementById('btn-clear-benchmark')?.addEventListener('click', () => {
+    localStorage.removeItem('voltcrack_benchmark');
+    renderBenchmark(el);
+  });
+
+  // Run benchmark
+  document.getElementById('btn-run-benchmark').addEventListener('click', async () => {
+    liveResults = [];
+    document.getElementById('bm-progress').classList.remove('hidden');
+    document.getElementById('bm-results').innerHTML = '';
+    document.getElementById('btn-run-benchmark').disabled = true;
+
+    activeStream = new EventSource(`/api/benchmark?modes=${selectedMode}`);
+
+    activeStream.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      if (data.done) {
+        activeStream.close();
+        activeStream = null;
+        document.getElementById('bm-progress').classList.add('hidden');
+        document.getElementById('btn-run-benchmark').disabled = false;
+        localStorage.setItem('voltcrack_benchmark', JSON.stringify(liveResults));
+        document.getElementById('bm-results').innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-xs text-gray-500">${liveResults.length} modes benchmarked · results cached locally</p>
+          </div>
+          ${resultsTable(liveResults)}`;
+        return;
+      }
+      if (data.error) {
+        document.getElementById('bm-current').textContent = `Error: ${data.error}`;
+        return;
+      }
+      liveResults.push(data);
+      document.getElementById('bm-current').textContent = `Testing: ${data.id} — ${data.name}`;
+      document.getElementById('bm-live-table').innerHTML = resultsTable(liveResults);
+    };
+
+    activeStream.onerror = () => {
+      activeStream?.close();
+      activeStream = null;
+      document.getElementById('bm-progress').classList.add('hidden');
+      document.getElementById('btn-run-benchmark').disabled = false;
+    };
+  });
+
+  // Stop button
+  document.getElementById('btn-stop-benchmark')?.addEventListener('click', () => {
+    activeStream?.close();
+    activeStream = null;
+    document.getElementById('bm-progress').classList.add('hidden');
+    document.getElementById('btn-run-benchmark').disabled = false;
+    if (liveResults.length) {
+      localStorage.setItem('voltcrack_benchmark', JSON.stringify(liveResults));
+      document.getElementById('bm-results').innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs text-gray-500">${liveResults.length} modes benchmarked · stopped early · results cached locally</p>
+        </div>
+        ${resultsTable(liveResults)}`;
+    }
+  });
 }
 
 // ── Page: Settings (merged) ─────────────────────────────────────────────────
