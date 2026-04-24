@@ -42,5 +42,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Claude Code project memory (local dev only)
+# Claude Code project memory and instructions (local dev only)
 .claude/
+CLAUDE.md
