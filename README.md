@@ -9,6 +9,7 @@
 
 [![Status](https://img.shields.io/badge/status-testing%20phase-orange?style=flat-square)](https://github.com/aliilaali1/hashcatui)
 [![Built with](https://img.shields.io/badge/built%20with-FastAPI%20%2B%20Vanilla%20JS-blue?style=flat-square)](https://github.com/aliilaali1/hashcatui)
+[![Platform](https://img.shields.io/badge/platform-Windows%20only-lightgrey?style=flat-square&logo=windows)](https://github.com/aliilaali1/hashcatui)
 [![Vibes](https://img.shields.io/badge/vibes-immaculate-purple?style=flat-square)](https://github.com/aliilaali1/hashcatui)
 
 </div>
@@ -40,6 +41,8 @@ Voltcrack wraps hashcat in a slick browser interface so you can queue jobs, moni
 
 ## getting started
 
+> 🪟 **Windows only.** the bundled hashcat binary is `hashcat.exe` and the whole thing is built and tested on Windows. linux/mac support is not planned right now. if you're on linux you probably already live in the terminal anyway.
+
 clone it, run it, that's literally it:
 
 ```bash
@@ -52,7 +55,7 @@ then open **http://localhost:8000** in your browser.
 
 `start.py` handles dependency installation on first run. hashcat is bundled — no separate install needed. GPU kernels get compiled automatically on first launch (so the first run takes a moment, don't panic).
 
-**requirements:** Python 3.10+, a GPU or CPU that hashcat supports, and a vague sense of optimism.
+**requirements:** Windows 10/11, Python 3.10+, a GPU or CPU that hashcat supports, and a vague sense of optimism.
 
 ---
 
